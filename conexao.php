@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$db = "seu_banco";
+$db = "aula4";
 $user = "root";
 $pass = "";
 
