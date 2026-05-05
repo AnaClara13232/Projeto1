@@ -1,41 +1,14 @@
 <?php
 include "conexao.php";
 
-function validarCPF($cpf) {
-    $cpf = preg_replace('/[^0-9]/', '', $cpf);
-
-    if (strlen($cpf) != 11) return false;
-
-    if (preg_match('/(\d)\1{10}/', $cpf)) return false;
-
-    for ($t = 9; $t < 11; $t++) {
-        for ($d = 0, $c = 0; $c < $t; $c++) {
-            $d += $cpf[$c] * (($t + 1) - $c);
-        }
-        $d = ((10 * $d) % 11) % 10;
-
-        if ($cpf[$c] != $d) return false;
-    }
-
-    return true;
-}
-
 if (isset($_POST['login'])) {
 
-    $entrada = trim($_POST['emailcelularcpf']);
+    $email = trim($_POST['email']);
     $senha = trim($_POST['senha']);
 
-    $emailValido = filter_var($entrada, FILTER_VALIDATE_EMAIL);
-    $celularValido = preg_match('/^[0-9]{10,30}$/', $entrada);
-    $cpfValido = validarCPF($entrada);
-
-    if ($cpfValido) {
-        $entrada = hash('sha256', $entrada);
-    }
-
-    $sql = "SELECT * FROM user WHERE email_telefone_cpf = :entrada LIMIT 1";
+    $sql = "SELECT * FROM user WHERE email_telefone_cpf = :email LIMIT 1";
     $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':entrada', $entrada);
+    $stmt->bindParam(':email', $email);
     $stmt->execute();
 
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -58,8 +31,8 @@ if (isset($_POST['login'])) {
 <h2>Login</h2>
 
 <form method="post">
-    <label>Email/Celular/CPF:</label>
-    <input name="emailcelularcpf" required>
+    <label>Email:</label>
+    <input type="email" name="email" required>
     <br><br>
 
     <label>Senha:</label>
